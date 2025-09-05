@@ -4,7 +4,7 @@
  */
 
 // API Configuration
-const API_BASE_URL = 'http://127.0.0.1:8080/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // Modal timeout reference
 let modalTimeout = null;
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('QueueTimer application initialized');
     
     // Register user immediately on page load
-    registerUser();
+    registerUser().then(r =>{} );
 
     // Add click event to modal to hide it manually
     document.getElementById('modal').addEventListener('click', function(e) {
