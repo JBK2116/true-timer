@@ -206,12 +206,15 @@ body {
     width: 100vw;
     height: 100vh;
     z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
 .modal--show {
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 1;
 }
 
 .modal__backdrop {
