@@ -1,0 +1,3 @@
+/*
+This files stores util functions used throughout the frontend
+ */
