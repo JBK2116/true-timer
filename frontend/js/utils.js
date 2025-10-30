@@ -84,7 +84,7 @@ function createNotification(message) {
  * @param {Date} time Current Time Object
  * @param {string} IANATimezone Timezone of current time
  */
-function createTimeString(time, IANATimezone) {
+export function createTimeString(time, IANATimezone) {
     return time.toLocaleTimeString("en-US", {
         timeZone: IANATimezone,
         hour12: false,   // 24-hour format
@@ -92,5 +92,24 @@ function createTimeString(time, IANATimezone) {
         minute: "2-digit",
         second: "2-digit"
     });
+}
+
+/** Purpose: Creates a `stats__item` to display
+ * @param {string} name Name of the stat item
+ * @param {number|string} value Value of the stat item
+ */
+export function createStatItem(name, value, id) {
+    let parent = document.getElementById("timer-stats");
+    let container = document.createElement("div");
+    container.classList.add("stats__item");
+    let statLabel = document.createElement("span");
+    statLabel.classList.add("stats__label");
+    statLabel.textContent = name;
+    let statValue = document.createElement("span");
+    statValue.classList.add("stats__value");
+    statValue.id = id;
+    statValue.textContent = value;
+    container.append(statLabel, statValue);
+    parent.appendChild(container);
 }
 
