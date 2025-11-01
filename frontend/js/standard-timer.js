@@ -5,55 +5,61 @@ import * as utils from './utils.js';
 
 export class StandardTimer {
     constructor(startTime, endTime, maxSeconds, timezone) {
+        // values for time calculations
         this.timezone = timezone;
         this.startTime = startTime;
         this.endTime = endTime;
         this.maxSeconds = maxSeconds;
         this.elapsedSeconds = 0;
         this.pauseCount = 0;
+        this.totalPausedMs = 0;
         this.lastPauseTime = null;
         this.isPaused = false;
+        // dom elements
+        this.timerDisplay = document.getElementById("work-timer-display");
+        this.pauseButton = document.getElementById("toggle-pause-button");
+        this.resetButton = document.getElementById("reset-button");
+    }
+    
+    /**
+     * Starts the timer session and sets all required statistics starting values
+     */
+    setTimer() {
+        this.setTimerStats();
+        this.update(this.timerDisplay);
+        this.intervalID = setInterval(() => this.update(this.timerDisplay), 1000);
     }
 
-    initializeWorkTimer() {
-        let timerDisplay = document.getElementById("work-timer-display");
-        this.updateWorkTimer(timerDisplay);
-        this.intervalID = setInterval(() => this.updateWorkTimer(timerDisplay), 1000);
-        this.initializeTimerStats();
+    /**
+     * Handles pausing and resuming the timer
+     */
+    togglePause() {
+        if (this.isPaused) {
+            // resume the timer
+            this.totalPausedMs += new Date() - this.lastPauseTime;
+            this.endTime = new Date(this.startTime.getTime() + (this.maxSeconds * 1000) + this.totalPausedMs);
+            this.isPaused = false;
+            this.pauseButton.textContent = "Pause";
+            this.update(this.timerDisplay);
+            this.intervalID = setInterval(() => this.update(this.timerDisplay), 1000);
+        } else {
+            // pause the timer
+            this.lastPauseTime = new Date();
+            this.pauseCount++;
+            this.isPaused = true;
+            this.pauseCountLabel.textContent = this.pauseCount;
+            this.pauseButton.textContent = "Resume";
+            if (this.intervalID) {
+                clearInterval(this.intervalID);
+                this.intervalID = null;
+            }
+        }
     }
 
-    pauseWorkTimer() {
-        if (this.isPaused === true) {
-            return "Timer is already paused!";
-        }
-        // pause the timer
-        this.lastPauseTime = new Date();
-        this.isPaused = true;
-        // clear the update work timer interval
-        if (this.intervalID !== undefined) {
-            clearInterval(this.intervalID);
-            this.intervalID = null;
-        }
-        return "Timer paused..."
-    }
-
-    resumeWorkTimer() {
-        if (this.isPaused === false) {
-            return "Timer is already running!";
-        }
-
-        let timerDisplay = document.getElementById("work-timer-display");
-        // clear out previous intervals if already exist
-        if (this.intervalID !== undefined) {
-            clearInterval(this.intervalID);
-            this.intervalID = null;
-        }
-        this.intervalID = setInterval(() => this.updateWorkTimer(timerDisplay), 1000);
-        return "Timer resumed..."
-
-    }
-
-    terminateWorkTimer() {
+    /**
+     * Ends the timer session
+     */
+    end() {
         // clear out any remaining interval IDs
         if (this.intervalID !== undefined) {
             clearInterval(this.intervalID);
@@ -64,23 +70,35 @@ export class StandardTimer {
         this.endTime = new Date();
     }
 
-    // helper function to control updating work timers
-    updateWorkTimer(timerDisplay) {
+    /**
+     * Increments the timer appropriately every second
+     *
+     * Updates the timer display and remaining time display
+     */
+    update() {
         const now = new Date();
-        timerDisplay.textContent = utils.createTimeString(now, this.timezone);
-        this.elapsedSeconds = Math.floor((now - this.startTime) / 1000);
-        if (this.elapsedSeconds === this.maxSeconds) {
-            this.terminateWorkTimer();
+        this.elapsedSeconds = Math.floor(((now - this.startTime - this.totalPausedMs)) / 1000);
+        this.timerDisplay.textContent = utils.formatDuration(this.elapsedSeconds);
+        this.remainingTimeLabel.textContent = utils.formatRemainingTime(this.elapsedSeconds, this.maxSeconds);
+        if (this.elapsedSeconds >= this.maxSeconds) {
+            this.end();
         }
     }
-    
-    initializeTimerStats() {
-        // initialize all session statistics for user
-        let startTime = document.getElementById("start-time-label");
-        let endTime = document.getElementById("end-time-label");
-        startTime.textContent = utils.createTimeString(this.startTime, this.timezone);
-        endTime.textContent = utils.createTimeString(this.endTime, this.timezone);
-        utils.createStatItem("Pause Count", this.pauseCount, "pause-count-label");
-        this.pauseCountStatID = "pause-count-label";
+
+    /**
+     * Sets all starting timer statistic labels for the session.
+     *
+     * Saves the DOM elements as attributes for the object
+     */
+    setTimerStats() {
+        // start-time & pause-time label
+        this.startTimeLabel = document.getElementById("start-time-label");
+        this.endTimeLabel = document.getElementById("end-time-label");
+        this.startTimeLabel.textContent = utils.formatClockTime(this.startTime, this.timezone)
+        this.endTimeLabel.textContent = utils.formatClockTime(this.endTime, this.timezone);
+        // pause count
+        this.pauseCountLabel = utils.createStatItem("Pause Count", this.pauseCount, "pause-count-label");
+        // remaining time
+        this.remainingTimeLabel = utils.createStatItem("Remaining Time", utils.formatRemainingTime(this.elapsedSeconds,this.maxSeconds), "remaining-time-label");
     }
 }

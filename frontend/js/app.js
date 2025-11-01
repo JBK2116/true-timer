@@ -7,10 +7,11 @@ import {StandardTimer} from "./standard-timer.js";
 function main() {
     let timezone = utils.getUserIANAString();
     console.log(`Timezone: ${timezone}`);
-    utils.initializePage(timezone);
+    utils.setPage(timezone);
     utils.showNotificationDynamic("Application ready for use", 3);
     let timer = new StandardTimer(new Date, new Date(Date.now() + 60 * 1000), 60, timezone);
-    timer.initializeWorkTimer(timezone);
+    timer.setTimer(timezone);
+    utils.setTimerButtons(timer);
 }
 
 document.addEventListener('DOMContentLoaded', main);
