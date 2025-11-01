@@ -17,15 +17,8 @@ export class StandardTimer {
 
     initializeWorkTimer() {
         let timerDisplay = document.getElementById("work-timer-display");
-        const updateWorkTimer = () => {
-            const now = new Date();
-            timerDisplay.textContent = utils.createTimeString(now, this.timezone);
-            this.elapsedSeconds += 1;
-            if (this.elapsedSeconds === this.maxSeconds) {
-                this.terminateWorkTimer();
-            }
-        }
-        this.intervalID = setInterval(updateWorkTimer, 1000);
+        this.updateWorkTimer(timerDisplay);
+        this.intervalID = setInterval(() => this.updateWorkTimer(timerDisplay), 1000);
         this.initializeTimerStats();
     }
 
@@ -33,8 +26,10 @@ export class StandardTimer {
         if (this.isPaused === true) {
             return "Timer is already paused!";
         }
+        // pause the timer
         this.lastPauseTime = new Date();
         this.isPaused = true;
+        // clear the update work timer interval
         if (this.intervalID !== undefined) {
             clearInterval(this.intervalID);
             this.intervalID = null;
@@ -46,34 +41,41 @@ export class StandardTimer {
         if (this.isPaused === false) {
             return "Timer is already running!";
         }
+
         let timerDisplay = document.getElementById("work-timer-display");
+        // clear out previous intervals if already exist
         if (this.intervalID !== undefined) {
             clearInterval(this.intervalID);
             this.intervalID = null;
         }
-        const resumeWorkTimer = () => {
-            const now = new Date();
-            timerDisplay.textContent = utils.createTimeString(now, this.timezone);
-            this.elapsedSeconds += 1;
-            if (this.elapsedSeconds === this.maxSeconds) {
-                this.terminateWorkTimer();
-            }
-        }
-        this.intervalID = setInterval(resumeWorkTimer, 1000);
+        this.intervalID = setInterval(() => this.updateWorkTimer(timerDisplay), 1000);
         return "Timer resumed..."
 
     }
 
     terminateWorkTimer() {
+        // clear out any remaining interval IDs
         if (this.intervalID !== undefined) {
             clearInterval(this.intervalID);
         }
+        // alert user
         let timerTitle = document.getElementById("work-timer-title");
         timerTitle.textContent = "Time's UP";
         this.endTime = new Date();
     }
+
+    // helper function to control updating work timers
+    updateWorkTimer(timerDisplay) {
+        const now = new Date();
+        timerDisplay.textContent = utils.createTimeString(now, this.timezone);
+        this.elapsedSeconds = Math.floor((now - this.startTime) / 1000);
+        if (this.elapsedSeconds === this.maxSeconds) {
+            this.terminateWorkTimer();
+        }
+    }
     
     initializeTimerStats() {
+        // initialize all session statistics for user
         let startTime = document.getElementById("start-time-label");
         let endTime = document.getElementById("end-time-label");
         startTime.textContent = utils.createTimeString(this.startTime, this.timezone);
