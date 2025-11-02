@@ -10,6 +10,7 @@ requires-python = ">=3.14"
 license = {text = "MIT"}
 dependencies = [
     "fastapi[standard]>=0.120.1",
+    "python-json-logger>=4.0.0",
 ]
 
 [dependency-groups]
