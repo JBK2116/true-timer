@@ -17,15 +17,24 @@ export class StandardTimer {
         this.isPaused = false;
         // dom elements
         this.timerDisplay = document.getElementById("work-timer-display");
+        this.startButton = document.getElementById("start-button");
         this.pauseButton = document.getElementById("toggle-pause-button");
-        this.resetButton = document.getElementById("reset-button");
+        this.endButton = document.getElementById("end-button");
+    }
+
+    /**
+     * Sets the timer up to be started
+     */
+    setTimer() {
+        this.timerDisplay.textContent = "Ready To Begin";
+        this.setTimerStats();
     }
     
     /**
      * Starts the timer session and sets all required statistics starting values
      */
-    setTimer() {
-        this.setTimerStats();
+    startTimer() {
+        this.startButton.style.display = "none";
         this.update(this.timerDisplay);
         this.intervalID = setInterval(() => this.update(this.timerDisplay), 1000);
     }
@@ -68,6 +77,9 @@ export class StandardTimer {
         let timerTitle = document.getElementById("work-timer-title");
         timerTitle.textContent = "Time's UP";
         this.endTime = new Date();
+        // disable buttons
+        this.pauseButton.disabled = true;
+        this.endButton.disabled = true;
     }
 
     /**

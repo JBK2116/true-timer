@@ -84,9 +84,18 @@ export function setPage(IANATimezone) {
  * @param {StandardTimer} timer Timer object for the session
  */
 export function setTimerButtons(timer) {
+    // Start Button
+    let startBtn = document.getElementById("start-button");
+    startBtn.addEventListener("click", () => timer.startTimer())
+    
     // Toggle Pause Button
     let togglePauseBtn = document.getElementById("toggle-pause-button");
+    togglePauseBtn.disabled = false;
     togglePauseBtn.addEventListener("click", () => timer.togglePause());
+    // End Button
+    let endBtn = document.getElementById("end-button");
+    endBtn.disabled = false;
+    endBtn.addEventListener("click", () => timer.end());
 }
 
 /**
