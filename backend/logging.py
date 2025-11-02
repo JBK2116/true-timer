@@ -21,7 +21,7 @@ LOGGING_CONFIG: dict[str, Any] = {
         "standard_timer": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(LOGS_DIR, "standard.log"),
-            "maxBytes": 10485760, # 10MB
+            "maxBytes": 10485760,  # 10MB
             "formatter": "json",
             "backupCount": 5,
         },
@@ -68,6 +68,6 @@ LOGGING_CONFIG: dict[str, Any] = {
             "handlers": ["deep_timer", "console"],
             "level": "INFO",
             "propagate": False,
-        }
+        },
     },
 }

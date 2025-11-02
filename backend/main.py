@@ -14,7 +14,7 @@ origins: list[str] = [
     # "https://domain.com",
     # "https://www.domain.com",
 ]
-app = FastAPI(root_path="/api") # /domain/api/ to view api endpoints
+app = FastAPI(root_path="/api")  # /domain/api/ to view api endpoints
 
 app.add_middleware(
     CORSMiddleware,

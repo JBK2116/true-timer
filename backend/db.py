@@ -1,0 +1,55 @@
+import os
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
+from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.declarative import declarative_base
+
+load_dotenv()
+
+connection_url: str = f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+alembic_connection_url: str = f"postgresql+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+engine = create_async_engine(
+    connection_url,
+    pool_size=20,
+    max_overflow=0,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    echo=False,
+    future=True,
+)
+
+Base = declarative_base()
+
+async_session_generator = async_sessionmaker(engine, expire_on_commit=False)
+
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Yields a database connection used via dependency injections
+    in fast api endpoint handling
+    """
+    async with async_session_generator() as session:
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+
+@asynccontextmanager
+async def general_db() -> AsyncGenerator[AsyncSession, None]:
+    """
+    Yields a database connection used via regular async functions
+    """
+    async with async_session_generator() as session:
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
