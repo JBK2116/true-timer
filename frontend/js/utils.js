@@ -96,6 +96,9 @@ export function setTimerButtons(timer) {
     let endBtn = document.getElementById("end-button");
     endBtn.disabled = false;
     endBtn.addEventListener("click", () => timer.end());
+    // Reset Button
+    let resetBtn = document.getElementById("reset-button");
+    resetBtn.addEventListener("click", () => timer.reset());
 }
 
 /**

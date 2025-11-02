@@ -17,9 +17,11 @@ export class StandardTimer {
         this.isPaused = false;
         // dom elements
         this.timerDisplay = document.getElementById("work-timer-display");
+        this.remainingTimeDisplay = document.getElementById("remaining-time-overlay");
         this.startButton = document.getElementById("start-button");
         this.pauseButton = document.getElementById("toggle-pause-button");
         this.endButton = document.getElementById("end-button");
+        this.resetButton = document.getElementById("reset-button");
     }
 
     /**
@@ -75,11 +77,14 @@ export class StandardTimer {
         }
         // alert user
         let timerTitle = document.getElementById("work-timer-title");
-        timerTitle.textContent = "Time's UP";
+        timerTitle.textContent = "Session Complete";
         this.endTime = new Date();
         // disable buttons
         this.pauseButton.disabled = true;
         this.endButton.disabled = true;
+        // enable reset button
+        this.resetButton.style.display = "flex";
+        
     }
 
     /**
@@ -91,7 +96,7 @@ export class StandardTimer {
         const now = new Date();
         this.elapsedSeconds = Math.floor(((now - this.startTime - this.totalPausedMs)) / 1000);
         this.timerDisplay.textContent = utils.formatDuration(this.elapsedSeconds);
-        this.remainingTimeLabel.textContent = utils.formatRemainingTime(this.elapsedSeconds, this.maxSeconds);
+        this.remainingTimeDisplay.textContent = utils.formatRemainingTime(this.elapsedSeconds, this.maxSeconds);
         if (this.elapsedSeconds >= this.maxSeconds) {
             this.end();
         }
@@ -110,7 +115,35 @@ export class StandardTimer {
         this.endTimeLabel.textContent = utils.formatClockTime(this.endTime, this.timezone);
         // pause count
         this.pauseCountLabel = utils.createStatItem("Pause Count", this.pauseCount, "pause-count-label");
-        // remaining time
-        this.remainingTimeLabel = utils.createStatItem("Remaining Time", utils.formatRemainingTime(this.elapsedSeconds,this.maxSeconds), "remaining-time-label");
     }
+
+    /**
+     * Resets the page according to the timer display
+     */
+    reset() {
+        // clear interval
+        if (this.intervalID) {
+            clearInterval(this.intervalID);
+            this.intervalID = null;
+        }
+        // reset all properties
+        this.elapsedSeconds = 0;
+        this.pauseCount = 0;
+        this.totalPausedMs = 0;
+        this.lastPauseTime = null;
+        this.isPaused = false;
+        // reset display
+        this.timerDisplay.textContent = "00:00:00";
+        document.getElementById("work-timer-title").textContent = "Work Session";
+        // reset buttons
+        this.pauseButton.disabled = false;
+        this.pauseButton.textContent = "Pause";
+        this.endButton.disabled = false;
+        this.resetButton.style.display = "none";
+        // reset stats
+        this.startTimeLabel.textContent = "--:--:--";
+        this.endTimeLabel.textContent = "--:--:--";
+        this.pauseCountLabel.textContent = "0";
+        this.remainingTimeDisplay.textContent = "--:--";
+    } 
 }

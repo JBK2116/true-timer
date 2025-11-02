@@ -99,6 +99,7 @@ body {
 
 .timer__work,
 .timer__break {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -111,16 +112,26 @@ body {
     margin-bottom: 1rem;
 }
 
+.timer__remaining {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1rem;
+    color: #00FF85;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
 .timer__title {
     margin: 0;
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     font-weight: 500;
     color: #00FF85;
 }
 
 .timer__display {
     margin: 0;
-    font-size: 5rem;
+    font-size: 3rem;
     font-weight: 300;
     color: #FFFFFF;
     letter-spacing: 0.125rem;
@@ -344,7 +355,7 @@ body {
 
 @media (max-width: 64rem) {
     .timer__display {
-        font-size: 4rem;
+        font-size: 3rem;
     }
 }
 
@@ -373,11 +384,15 @@ body {
     }
 
     .timer__title {
-        font-size: 4rem;
+        font-size: 2rem;
     }
 
     .timer__display {
-        font-size: 3rem;
+        font-size: 2.5rem;
+    }
+
+    .timer__remaining {
+        font-size: 0.9rem;
     }
 
     .timer__controls {
@@ -397,11 +412,15 @@ body {
     }
 
     .timer__title {
-        font-size: 2.6rem;
+        font-size: 1.75rem;
     }
 
     .timer__display {
-        font-size: 2.5rem;
+        font-size: 2rem;
+    }
+
+    .timer__remaining {
+        font-size: 0.85rem;
     }
 
     .timer__btn {
