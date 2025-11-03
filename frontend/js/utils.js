@@ -2,6 +2,21 @@
 This files stores util functions used throughout the frontend
  */
 
+const BASE_URL = "http://localhost:8000";
+
+/**
+ * URL Endpoints for the backend
+ * @type {Readonly<{BASE_URL: string, TEST: {ROOT: string, UUID: string}, UUID: string}>}
+ */
+export const ENDPOINTS = Object.freeze({
+    BASE_URL,
+    TEST: {
+        ROOT: `${BASE_URL}/test`,
+        UUID: `${BASE_URL}/test/uuid`,
+    },
+    UUID: `${BASE_URL}/uuid`,
+});
+
 /**
  * Gets the IANA String from the user's browser.
  * @example - If the user is in Toronto, IANA String = America/Toronto
