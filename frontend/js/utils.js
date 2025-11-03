@@ -6,15 +6,14 @@ const BASE_URL = "http://localhost:8000";
 
 /**
  * URL Endpoints for the backend
- * @type {Readonly<{BASE_URL: string, TEST: {ROOT: string, UUID: string}, UUID: string}>}
+ * @type {Readonly<{BASE_URL: string, USER: string, TEST: {ROOT: string}}>}
  */
 export const ENDPOINTS = Object.freeze({
     BASE_URL,
+    USER: `${BASE_URL}/users`,
     TEST: {
         ROOT: `${BASE_URL}/test`,
-        UUID: `${BASE_URL}/test/uuid`,
     },
-    UUID: `${BASE_URL}/uuid`,
 });
 
 /**

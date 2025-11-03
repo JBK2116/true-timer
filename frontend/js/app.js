@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', main);
 
 /**
  * Checks for a cached UUID string in the User's browsers
- * If there is a cached UUID, sends a GET request to ensure it's valid
+ * If there is a cached UUID, sends a GET request to ensure it belongs to a user and is valid
  *
- * @returns true if UUID is valid, false otherwise
+ * @returns true if successful, false otherwise
  */
 async function checkUUID() {
     // check browser cache
@@ -37,7 +37,7 @@ async function checkUUID() {
     if (!value) return false; 
     // ensure UUID is valid
     try {
-        const response = await fetch(`${URLS.TEST.UUID}${value}`);
+        const response = await fetch(`${URLS.USER}/${value}`);
         return response.ok;
     } catch (error) {
         console.log(error);
@@ -55,13 +55,13 @@ async function checkUUID() {
 async function createUUID(timezone) {
     const payload = {"timezone": timezone};
     try {
-        const response = await fetch(`${URLS.UUID}`, {
+        const response = await fetch(`${URLS.USER}`, {
             method: "POST", body: JSON.stringify(payload),
         })
         if (!response.ok) return false;
         const result = await response.json();
-        if (!result.id) return false;
-        localStorage.setItem("user_uuid", result.id)
+        if (!result.user_id) return false;
+        localStorage.setItem("user_uuid", result.user_id)
         return true;
     } catch (error) {
         console.log(error);
