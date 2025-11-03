@@ -208,3 +208,7 @@ __marimo__/
 
 # IntelliJ Files
 *.idea
+
+# AI Files
+gemini.md
+system.md
