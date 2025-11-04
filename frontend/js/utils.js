@@ -2,16 +2,14 @@
 This files stores util functions used throughout the frontend
  */
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://localhost:8000/api";
 
 /**
  * URL Endpoints for the backend
  * @type {Readonly<{BASE_URL: string, USER: string, TEST: {ROOT: string}}>}
  */
 export const ENDPOINTS = Object.freeze({
-    BASE_URL,
-    USER: `${BASE_URL}/users`,
-    TEST: {
+    BASE_URL, USER: `${BASE_URL}/users`, TEST: {
         ROOT: `${BASE_URL}/test`,
     },
 });
@@ -81,38 +79,19 @@ export function setPage(IANATimezone) {
     // NOTIFICATION MODAL EVENT HANDLER
     let notificationModal = document.getElementById("notification-modal");
     let closeButton = notificationModal.querySelector(".modal__close");
-    closeButton.addEventListener("click", function (event) {
+    closeButton.addEventListener("click", function () {
         notificationModal.classList.remove("modal--show");
     })
     // CURRENT TIME DISPLAY
     let currentTimeDisplay = document.getElementById("current-time-display");
+
     function updatePageTime() {
         const now = new Date();
         currentTimeDisplay.textContent = formatClockTime(now, IANATimezone);
     }
+
     updatePageTime();
     setInterval(updatePageTime, 1000);
-}
-
-/** Creates the event handlers for the timer buttons
- * @param {StandardTimer} timer Timer object for the session
- */
-export function setTimerButtons(timer) {
-    // Start Button
-    let startBtn = document.getElementById("start-button");
-    startBtn.addEventListener("click", () => timer.startTimer())
-    
-    // Toggle Pause Button
-    let togglePauseBtn = document.getElementById("toggle-pause-button");
-    togglePauseBtn.disabled = false;
-    togglePauseBtn.addEventListener("click", () => timer.togglePause());
-    // End Button
-    let endBtn = document.getElementById("end-button");
-    endBtn.disabled = false;
-    endBtn.addEventListener("click", () => timer.end());
-    // Reset Button
-    let resetBtn = document.getElementById("reset-button");
-    resetBtn.addEventListener("click", () => timer.reset());
 }
 
 /**
@@ -123,11 +102,8 @@ export function setTimerButtons(timer) {
  */
 export function formatClockTime(time, IANATimezone) {
     return time.toLocaleTimeString("en-US", {
-        timeZone: IANATimezone,
-        hour12: false,   // 24-hour format
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+        timeZone: IANATimezone, hour12: false,   // 24-hour format
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
     });
 }
 
@@ -161,7 +137,7 @@ export function formatRemainingTime(elapsedSeconds, maxSeconds) {
  * @param {string} name Name of the stat item
  * @param {number|string} value Value of the stat item
  * @param {string} id - ID to assign to the stat item value
- * @returns span - DOM element
+ * @returns HTMLSpanElement - DOM element
  */
 export function createStatItem(name, value, id) {
     let parent = document.getElementById("timer-stats");

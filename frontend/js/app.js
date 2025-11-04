@@ -2,16 +2,15 @@
 Frontend entry point for this application
  */
 import * as utils from './utils.js';
-import {StandardTimer} from "./standard-timer.js";
 
 const URLS = utils.ENDPOINTS
 
 async function main() {
     // ENSURE USER HAS VALID UUID
     const userTimezone = utils.getUserIANAString();
-    const hasValidID  = await checkUUID();
+    const hasValidID = await checkUUID();
     if (!hasValidID) {
-        const idCreated   = await createUUID(userTimezone);
+        const idCreated = await createUUID(userTimezone);
         if (!idCreated) {
             utils.showNotificationStatic("Oops! There was a problem setting things up. Try reloading the page.")
             return;
@@ -33,8 +32,8 @@ document.addEventListener('DOMContentLoaded', main);
  */
 async function checkUUID() {
     // check browser cache
-    const value = localStorage.getItem("uuid");
-    if (!value) return false; 
+    const value = localStorage.getItem("user_uuid");
+    if (!value) return false;
     // ensure UUID is valid
     try {
         const response = await fetch(`${URLS.USER}/${value}`);
@@ -56,7 +55,9 @@ async function createUUID(timezone) {
     const payload = {"timezone": timezone};
     try {
         const response = await fetch(`${URLS.USER}`, {
-            method: "POST", body: JSON.stringify(payload),
+            method: "POST", headers: {
+                "Content-Type": "application/json",
+            }, body: JSON.stringify(payload),
         })
         if (!response.ok) return false;
         const result = await response.json();

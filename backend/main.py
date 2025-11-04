@@ -17,7 +17,8 @@ from backend.schemas import CreateUserIn, CreateUserOut, GetUserOut
 logging.config.dictConfig(LOGGING_CONFIG)
 
 origins: list[str] = [
-    "http://localhost:8000",
+    "http://localhost:8000", # Development
+    "http://localhost:63342", # Development
     # "https://domain.com",
     # "https://www.domain.com",
 ]

@@ -16,6 +16,7 @@ export class StandardTimer {
         this.lastPauseTime = null;
         this.isPaused = false;
         // dom elements
+        this.timerTitle = document.getElementById("work-timer-title");
         this.timerDisplay = document.getElementById("work-timer-display");
         this.remainingTimeDisplay = document.getElementById("remaining-time-overlay");
         this.startButton = document.getElementById("start-button");
@@ -31,7 +32,24 @@ export class StandardTimer {
         this.timerDisplay.textContent = "Ready To Begin";
         this.setTimerStats();
     }
-    
+
+    /**
+     * Sets the timer buttons up to be started
+     */
+    setButtons() {
+        // Start Button
+        this.startBtn.disabled = false;
+        this.startBtn.addEventListener("click", () => this.startTimer())
+        // Toggle Pause Button
+        this.togglePauseBtn.disabled = false;
+        this.togglePauseBtn.addEventListener("click", () => this.togglePause());
+        // End Button
+        this.endBtn.disabled = false;
+        this.endBtn.addEventListener("click", () => this.end());
+        // Reset Button
+        this.resetBtn.addEventListener("click", () => this.reset());
+    }
+
     /**
      * Starts the timer session and sets all required statistics starting values
      */
@@ -84,7 +102,7 @@ export class StandardTimer {
         this.endButton.disabled = true;
         // enable reset button
         this.resetButton.style.display = "flex";
-        
+
     }
 
     /**
@@ -126,24 +144,21 @@ export class StandardTimer {
             clearInterval(this.intervalID);
             this.intervalID = null;
         }
-        // reset all properties
-        this.elapsedSeconds = 0;
-        this.pauseCount = 0;
-        this.totalPausedMs = 0;
-        this.lastPauseTime = null;
-        this.isPaused = false;
-        // reset display
+        // reset main display
+        this.timerTitle.textContent = "Work Session";
         this.timerDisplay.textContent = "00:00:00";
-        document.getElementById("work-timer-title").textContent = "Work Session";
         // reset buttons
-        this.pauseButton.disabled = false;
+        this.startButton.style.display = "flex"; // SHOW START
+        this.startButton.disabled = true; // DISABLE START
+        this.pauseButton.disabled = true; // DISABLE PAUSE
         this.pauseButton.textContent = "Pause";
-        this.endButton.disabled = false;
-        this.resetButton.style.display = "none";
-        // reset stats
+        this.endButton.disabled = true; // DISABLE END BUTTON
+        this.resetButton.style.display = "none"; // HIDE RESET BUTTON
+        // reset main stats
         this.startTimeLabel.textContent = "--:--:--";
         this.endTimeLabel.textContent = "--:--:--";
-        this.pauseCountLabel.textContent = "0";
         this.remainingTimeDisplay.textContent = "--:--";
-    } 
+        // REMOVE DYNAMICALLY ADDED STATS
+        this.pauseCountLabel.remove();
+    }
 }
