@@ -248,9 +248,46 @@ body {
     z-index: 1001;
 }
 
-.modal__content--notification {
-    max-width: 25rem;
-    padding: 3.5rem 1.5rem 1.5rem;
+.modal--notification {
+    display: none;
+    position: fixed;
+    top: 3rem;
+    right: 1rem;
+    width: auto;
+    height: auto;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(-25rem);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.modal--notification.modal--show {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.modal--notification .modal__backdrop {
+    display: none; /* No dark backdrop */
+}
+
+.modal--notification .modal__content {
+    max-width: 20rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+    border-left: 0.25rem solid #00FF85; /* Accent bar */
+}
+
+.modal--notification .modal__close {
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.modal--notification .modal__message {
+    padding-right: 1.5rem; /* Space for close button */
+    text-align: left;
+    font-size: 0.875rem;
 }
 
 .modal__close {
