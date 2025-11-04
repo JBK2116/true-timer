@@ -19,7 +19,7 @@ async function main() {
     const uuid = localStorage.getItem("user_uuid");
     // USER HAS VALID UUID BY THIS POINT
     utils.setPage(userTimezone);
-    utils.showNotificationDynamic("All set! Let's start your first timer.", 3000)
+    utils.showNotificationDynamic("All set! Let's start your first timer.", 3)
 }
 
 document.addEventListener('DOMContentLoaded', main);
