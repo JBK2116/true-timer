@@ -12,13 +12,14 @@ from backend.db import get_db
 from backend.logging import LOGGING_CONFIG
 from backend.models import User
 from backend.schemas import CreateUserIn, CreateUserOut, GetUserOut
+from backend.standard_timer.routers import router as standard_router
 
 # LOGGING
 logging.config.dictConfig(LOGGING_CONFIG)
 
 origins: list[str] = [
-    "http://localhost:8080", # frontend dev server
-    "http://127.0.0.1:8080", # frontend via IP
+    "http://localhost:8080",  # frontend dev server
+    "http://127.0.0.1:8080",  # frontend via IP
     # "https://domain.com",
     # "https://www.domain.com",
 ]
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # include routers below
+app.include_router(standard_router)
 
 
 # global endpoints
@@ -54,7 +56,10 @@ async def get_user(
         return JSONResponse(content={"message": "Invalid UUID"}, status_code=400)
     user: User | None = await queries.get_user_by_uuid(user_uuid, db)
     if not user:
-        return JSONResponse(content={"message": f"User with UUID:{user_uuid} does not exist"}, status_code=400)
+        return JSONResponse(
+            content={"message": f"User with UUID:{user_uuid} does not exist"},
+            status_code=400,
+        )
     return GetUserOut(**user.__dict__)
 
 
@@ -65,7 +70,7 @@ async def create_user(
     result: bool = is_valid_timezone(data.timezone)
     if not result:
         return JSONResponse(status_code=400, content={"message": "Invalid timezone"})
-    new_user = User(user_id=uuid.uuid4(), timezone=data.timezone) # type: ignore | Pyright uneccessary warning with sqlalchemy model
+    new_user = User(user_id=uuid.uuid4(), timezone=data.timezone)  # type: ignore | Pyright uneccessary warning with sqlalchemy model
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)

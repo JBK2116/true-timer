@@ -2,7 +2,7 @@
 This files stores util functions used throughout the frontend
  */
 
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = "http://127.0.0.1:8000";
 
 /**
  * URL Endpoints for the backend
@@ -11,6 +11,7 @@ const BASE_URL = "http://localhost:8000/api";
 export const ENDPOINTS = Object.freeze({
   BASE_URL,
   USER: `${BASE_URL}/users`,
+  STANDARD_TIMER: `${BASE_URL}/api/standard`,
   TEST: {
     ROOT: `${BASE_URL}/test`,
   },
@@ -49,39 +50,6 @@ export function disablePresetCards() {
   });
 }
 
-export async function setStandardTimerCard() {
-  let card = document.getElementById("preset-standard");
-  let modal = document.getElementById("standard-timer-modal");
-  let closeBtn = document.getElementById("close-standard-modal");
-  card.addEventListener("click", () => {
-    // Show standard timer modal form
-    modal.classList.remove("modal--hidden");
-    modal.classList.add("modal--show");
-  });
-  // set up close button for modal
-  closeBtn.addEventListener("click", () => {
-    modal.classList.remove("modal--show");
-    modal.classList.add("modal--hidden");
-  });
-
-  await setStandardTimerSubmit();
-}
-
-export async function setStandardTimerSubmit() {
-  document.getElementById("standard-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    // handling submit action here
-    const hours = parseInt(document.getElementById("timer-hours").value);
-    const minutes = parseInt(document.getElementById("timer-minutes").value);
-    // TODO: Set up timer logic for handling submit.
-    // 1. Set up the submission and bad response
-    // 2. Set up the submission and good response
-    // 3. Handle timer logic
-    // 1. Set up submission
-    const payload = { hours: hours, minutes: minutes };
-    // const response = fetch()
-  });
-}
 
 /** Creates the notification modal using the provided message.
  * @param {string} message Message to set in the modal
@@ -211,3 +179,5 @@ export function createStatItem(name, value, id) {
   parent.appendChild(container);
   return statValue;
 }
+
+// Below

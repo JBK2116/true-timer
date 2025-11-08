@@ -5,7 +5,7 @@ All models for this web application will go here
 from datetime import datetime
 
 from sqlalchemy import UUID, DateTime, ForeignKey, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from backend.db import Base
 
@@ -22,10 +22,27 @@ class TimeStampMixin:
 
 class TimerMixin:
     id: Mapped[int] = mapped_column(primary_key=True)
-    start_time: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+    # track start and end time
+    start_time: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,  # set when user explicitly starts timer
     )
-    end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    end_time: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    # track state
+    total_paused_seconds: Mapped[int] = mapped_column(
+        default=0
+    )  # tracks cumulative total paused seconds
+    last_pause: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )  # updated on every pause request
+    is_started: Mapped[bool] = mapped_column(default=False)  # set on start request
+    is_paused: Mapped[bool] = mapped_column(
+        default=False
+    )  # updated on every pause/resume request
+    is_completed: Mapped[bool] = mapped_column(default=False)  # updated on end request
+    # track basic statistics
     pause_count: Mapped[int] = mapped_column(default=0)
 
 
@@ -36,8 +53,27 @@ class User(TimeStampMixin, Base):
     timezone: Mapped[str] = mapped_column(nullable=False)
 
 
-class StandardTimer(TimerMixin, Base):
+class StandardTimer(TimerMixin, TimeStampMixin, Base):
     # Many StandardTimers to One User
     __tablename__ = "standard_timer"
     user_id: Mapped[UUID] = mapped_column(ForeignKey("users.user_id"))
     user: Mapped["User"] = relationship()
+    minutes: Mapped[int] = mapped_column(nullable=False)
+    hours: Mapped[int] = mapped_column(nullable=False)
+
+    @validates("minutes", "hours")
+    def validate_duration(self, key, value) -> int:
+        """
+        Validates duration value fields (minutes and hours)
+        :param key: current field being evaluated
+        :param value: value of current field being evaluated
+        """
+        if key == "minutes" and (value < 0 or value > 59):
+            raise ValueError("Minutes must be between 1 and 59 inclusive")
+        if key == "hours" and (value < 0 or value > 23):
+            raise ValueError("Hours must be between 0 and 23 inclusive")
+        minutes = value if key == "minutes" else getattr(self, "minutes", 0)
+        hours = value if key == "hours" else getattr(self, "hours", 0)
+        if minutes == 0 and hours == 0:
+            raise ValueError("Timer duration must be at least 1 minute")
+        return value

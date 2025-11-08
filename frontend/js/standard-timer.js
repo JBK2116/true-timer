@@ -1,6 +1,8 @@
 /*
 This file stores the utilities for handling standard-timers
  */
+
+// TODO: Rewrite this entire file to make it work with the backend
 import * as utils from './utils.js';
 
 export class StandardTimer {
@@ -54,6 +56,7 @@ export class StandardTimer {
      * Starts the timer session and sets all required statistics starting values
      */
     startTimer() {
+        // TODO: update this to send a async request to backend to receive start time and estimated end time string
         this.startButton.style.display = "none";
         this.update(this.timerDisplay);
         this.intervalID = setInterval(() => this.update(this.timerDisplay), 1000);
@@ -63,6 +66,7 @@ export class StandardTimer {
      * Handles pausing and resuming the timer
      */
     togglePause() {
+        // TODO: update this to send a async request to backend to notify of paused or resumed timer
         if (this.isPaused) {
             // resume the timer
             this.totalPausedMs += new Date() - this.lastPauseTime;
@@ -89,6 +93,7 @@ export class StandardTimer {
      * Ends the timer session
      */
     end() {
+        // TODO: update this to send a async request to backend to notify of completed timer
         // clear out any remaining interval IDs
         if (this.intervalID !== undefined) {
             clearInterval(this.intervalID);
