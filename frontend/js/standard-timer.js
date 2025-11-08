@@ -41,8 +41,8 @@ export class StandardTimer {
         this.startBtn.disabled = false;
         this.startBtn.addEventListener("click", () => this.startTimer())
         // Toggle Pause Button
-        this.togglePauseBtn.disabled = false;
-        this.togglePauseBtn.addEventListener("click", () => this.togglePause());
+        this.pauseButton.disabled = false;
+        this.pauseButton.addEventListener("click", () => this.togglePause());
         // End Button
         this.endBtn.disabled = false;
         this.endBtn.addEventListener("click", () => this.end());

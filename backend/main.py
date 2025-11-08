@@ -17,8 +17,8 @@ from backend.schemas import CreateUserIn, CreateUserOut, GetUserOut
 logging.config.dictConfig(LOGGING_CONFIG)
 
 origins: list[str] = [
-    "http://localhost:8000", # Development
-    "http://localhost:63342", # Development
+    "http://localhost:8080", # frontend dev server
+    "http://127.0.0.1:8080", # frontend via IP
     # "https://domain.com",
     # "https://www.domain.com",
 ]
@@ -65,7 +65,7 @@ async def create_user(
     result: bool = is_valid_timezone(data.timezone)
     if not result:
         return JSONResponse(status_code=400, content={"message": "Invalid timezone"})
-    new_user = User(user_id=uuid.uuid4(), timezone=data.timezone)
+    new_user = User(user_id=uuid.uuid4(), timezone=data.timezone) # type: ignore | Pyright uneccessary warning with sqlalchemy model
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
