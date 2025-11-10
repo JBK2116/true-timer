@@ -2,7 +2,7 @@
 Schemas for standard-timer processes
 """
 
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 
 
 class CreateStandardTimerIn(BaseModel):
