@@ -13,12 +13,12 @@ from backend.main import app
 from backend.models import User
 
 # Load test environment variables
-load_dotenv(".env.test")
+load_dotenv()
 
 # Build async test DB URL
 TEST_DATABASE_URL = (
-    f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
-    f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    f"postgresql+asyncpg://{os.getenv('DB_TEST_USER')}:{os.getenv('DB_TEST_PASSWORD')}"
+    f"@{os.getenv('DB_TEST_HOST')}:{os.getenv('DB_TEST_PORT')}/{os.getenv('DB_TEST_NAME')}"
 )
 
 # Use NullPool to avoid connection reuse across concurrent async tests
