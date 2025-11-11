@@ -1,6 +1,7 @@
 """
 General Tests for this web application
 """
+
 import uuid
 
 import pytest
@@ -69,8 +70,11 @@ async def test_create_user_valid_timezone(
     assert created_user is not None
     assert created_user.timezone == "America/New_York"
 
+
 @pytest.mark.asyncio
-async def test_get_user_invalid_uuid(async_client: AsyncClient, db_session: AsyncSession) -> None:
+async def test_get_user_invalid_uuid(
+    async_client: AsyncClient, db_session: AsyncSession
+) -> None:
     """
     Tests getting a user with an invalid UUID format.
     :param async_client: Async client for testing.
@@ -81,8 +85,11 @@ async def test_get_user_invalid_uuid(async_client: AsyncClient, db_session: Asyn
     assert response.status_code == 400
     assert response.json()["message"] is not None
 
+
 @pytest.mark.asyncio
-async def test_get_user_valid_uuid_invalid_user(async_client: AsyncClient, db_session: AsyncSession) -> None:
+async def test_get_user_valid_uuid_invalid_user(
+    async_client: AsyncClient, db_session: AsyncSession
+) -> None:
     """
     Tests getting a user with a valid UUID format.
     :param async_client: Async client for testing.
@@ -93,8 +100,11 @@ async def test_get_user_valid_uuid_invalid_user(async_client: AsyncClient, db_se
     assert response.status_code == 400
     assert "does not exist" in response.json()["message"]
 
+
 @pytest.mark.asyncio
-async def test_get_user_valid_uuid_valid_user(async_client: AsyncClient, db_session: AsyncSession) -> None:
+async def test_get_user_valid_uuid_valid_user(
+    async_client: AsyncClient, db_session: AsyncSession
+) -> None:
     """
     Tests getting a user with a valid UUID format and matching existing user.
     :param async_client: Async client for testing.
@@ -103,7 +113,9 @@ async def test_get_user_valid_uuid_valid_user(async_client: AsyncClient, db_sess
 
     # Create the user using the POST endpoint
     valid_timezone = "America/New_York"
-    response: Response = await async_client.post(f"/users", json={"timezone": valid_timezone})
+    response: Response = await async_client.post(
+        "/users", json={"timezone": valid_timezone}
+    )
     created_user = CreateUserOut.model_validate(response.json())
 
     # Test retrieving the user
@@ -113,4 +125,3 @@ async def test_get_user_valid_uuid_valid_user(async_client: AsyncClient, db_sess
     assert get_user_response.status_code == 200
     assert returned_user.user_id == created_user.user_id
     assert returned_user.timezone == valid_timezone
-

@@ -25,14 +25,15 @@ async def create_standard_timer(
     db: AsyncSession = Depends(get_db),
     user_id: str = Depends(services.get_user_header_id),
 ) -> JSONResponse | CreateStandardTimerOut:
-    user: User | None = await get_user_by_uuid(user_id, db)
-    if not user:
-        return JSONResponse(status_code=400, content={"message": "User not found"})
     # validate UUID
     try:
         valid_id = uuid.UUID(user_id)
     except ValueError:
         return JSONResponse(status_code=400, content={"message": "Invalid UUID"})
+    # validate matching user
+    user: User | None = await get_user_by_uuid(user_id, db)
+    if not user:
+        return JSONResponse(status_code=400, content={"message": "User not found"})
     # create timer
     try:
         timer = StandardTimer(user_id=valid_id, minutes=data.minutes, hours=data.hours)

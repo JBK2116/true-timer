@@ -1,4 +1,5 @@
 import os
+import uuid
 from typing import AsyncGenerator
 
 import pytest_asyncio
@@ -9,6 +10,7 @@ from sqlalchemy.pool import NullPool
 
 from backend.db import Base, get_db
 from backend.main import app
+from backend.models import User
 
 # Load test environment variables
 load_dotenv(".env.test")
@@ -79,3 +81,12 @@ async def setup_test_db():
     yield
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+
+
+@pytest_asyncio.fixture(name="create_user_in_db")
+async def create_user_in_db(db_session: AsyncSession) -> User:
+    user = User(user_id=uuid.uuid4(), timezone="America/New_York")
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user

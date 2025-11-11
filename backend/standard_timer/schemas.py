@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 class CreateStandardTimerIn(BaseModel):
     minutes: int = Field(
-        title="Minutes", description="Minute duration for the timer", ge=0, le=23
+        title="Minutes", description="Minute duration for the timer", ge=0, le=59
     )
     hours: int = Field(
         title="Hours", description="Hour duration for the timer", ge=0, le=24
