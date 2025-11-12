@@ -2,7 +2,6 @@
 Frontend entry point for this application
  */
 import * as utils from "./utils.js";
-import {ENDPOINTS} from "./utils.js";
 
 const URLS = utils.ENDPOINTS;
 
@@ -19,7 +18,7 @@ async function main() {
             return;
         }
     }
-    const uuid = localStorage.getItem("user_uuid");
+    const user_uuid = localStorage.getItem("user_uuid");
     // user has a valid uuid by this point
     utils.setPage(userTimezone);
     utils.showNotificationDynamic("All set! Let's start your first timer.", 3);
@@ -107,13 +106,10 @@ async function standardTimerSubmit() {
         const hours = parseInt(document.getElementById("timer-hours").value);
         const minutes = parseInt(document.getElementById("timer-minutes").value);
         let payload = {"minutes": minutes, "hours": hours};
-        const response = await fetch(`${URLS.STANDARD_TIMER}`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'X-User-ID': localStorage.getItem("user_uuid"),
-            },
-            body: JSON.stringify(payload),
+        const response = await fetch(`${URLS.STANDARD_TIMER.ROOT}`, {
+            method: "POST", headers: {
+                'Content-Type': 'application/json', 'X-User-ID': localStorage.getItem("user_uuid"),
+            }, body: JSON.stringify(payload),
         });
         // convert response data to JSON
         const data = await response.json();
