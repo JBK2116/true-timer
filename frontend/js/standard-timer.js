@@ -17,11 +17,11 @@ export class StandardTimer {
         this.endTime = null; // calculated from startTime + maxSeconds
         this.maxSeconds = maxSeconds; // max seconds for timer
 
-        // attributes for tracking timer state (backend is source of truth)
+        // attributes for tracking timer state
         this.elapsedSeconds = 0;
         this.pauseCount = 0;
         this.totalPausedMs = 0;
-        this.lastPauseTime = null;
+        this.lastPauseTime = null; // updated on `pause` and `resume` endpoints
         this.isPaused = false;
 
         // dom elements
@@ -57,16 +57,20 @@ export class StandardTimer {
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    // sync timer state from backend
-                    this.maxSeconds = data.minutes * 60;
+                    // timer identification
+                    this.timerID = data.timer_id
+                    this.maxSeconds = (data.hours * 3600) + (data.minutes * 60);
+                    // timer state
                     this.elapsedSeconds = data.elapsed_seconds || 0;
                     this.totalPausedMs = (data.total_paused_seconds || 0) * 1000; // convert to ms
+                    this.isPaused = data.is_paused || false;
+                    this.pauseCount = data.total_pause_count || 0;
+                    // timer timestamps
                     this.lastPauseTime = data.last_pause_time ? new Date(data.last_pause_time) : null;
                     this.startTime = new Date(data.start_time);
+                    // timer formatted display strings
                     this.startTimeString = data.start_time_string;
-                    this.estimatedEndTimeString = data.estimated_end_time_string;
-                    this.pauseCount = data.total_pause_count || 0;
-                    this.isPaused = data.is_paused || false;
+                    this.endTimeString = data.end_time_string;
                     await this.startTimer();
                 } else {
                     showNotificationDynamic(data.message || "Failed to start timer", 5000);
@@ -112,7 +116,7 @@ export class StandardTimer {
 
         // 5. initialize the statistics
         document.getElementById("start-time-label").textContent = this.startTimeString;
-        document.getElementById("end-time-label").textContent = this.estimatedEndTimeString;
+        document.getElementById("end-time-label").textContent = this.endTimeString;
         this.pauseCountLabel = utils.createStatItem("Pause Count", this.pauseCount, "pause-count-label");
 
         // 6. start the visual timer display
@@ -142,7 +146,7 @@ export class StandardTimer {
                 // 2. sync state from backend response
                 this.totalPausedMs = (data.total_paused_seconds || 0) * 1000;
                 this.lastPauseTime = null; // reset it
-                this.isPaused = false;
+                this.isPaused = data.is_paused || false;
 
                 // 3. update UI
                 this.pauseButton.textContent = "Pause";
@@ -165,7 +169,7 @@ export class StandardTimer {
                 // 2. sync state from backend response
                 this.lastPauseTime = new Date(data.last_pause_time);
                 this.pauseCount = data.total_pause_count;
-                this.isPaused = true;
+                this.isPaused = data.is_paused || true;
 
                 // 3. update UI
                 this.pauseCountLabel.textContent = this.pauseCount;
@@ -192,9 +196,9 @@ export class StandardTimer {
             const response = await fetch(`${utils.ENDPOINTS.STANDARD_TIMER.END}/${this.timerID}`, {
                 method: "POST", headers: {"Content-Type": "application/json", "X-User-ID": this.userID},
             });
+            const data = await response.json();
 
             if (!response.ok) {
-                const data = await response.json();
                 showNotificationStatic(data.message || "Failed to end timer");
             }
         } catch (error) {
@@ -213,6 +217,10 @@ export class StandardTimer {
         this.pauseButton.disabled = true;
         this.endButton.disabled = true;
         this.resetButton.style.display = "flex";
+
+        // 4. update statistics
+        document.getElementById("end-time-label").textContent = data.end_time_string;
+        this.pauseCountLabel.textContent = data.total_pause_count;
     }
 
     /**

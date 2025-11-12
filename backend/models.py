@@ -31,10 +31,16 @@ class TimerMixin:
         DateTime(timezone=True), nullable=True
     )
     # track state
+    elapsed_seconds: Mapped[int] = mapped_column(
+        default=0
+    )  # tracks cumulative elapsed seconds
     total_paused_seconds: Mapped[int] = mapped_column(
         default=0
     )  # tracks cumulative total paused seconds
-    last_pause: Mapped[datetime | None] = mapped_column(
+    total_pause_count: Mapped[int] = mapped_column(
+        default=0
+    )  # tracks total pause count
+    last_pause_time: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )  # updated on every pause request
     is_started: Mapped[bool] = mapped_column(default=False)  # set on start request
@@ -42,8 +48,6 @@ class TimerMixin:
         default=False
     )  # updated on every pause/resume request
     is_completed: Mapped[bool] = mapped_column(default=False)  # updated on end request
-    # track basic statistics
-    pause_count: Mapped[int] = mapped_column(default=0)
 
 
 class User(TimeStampMixin, Base):
@@ -51,6 +55,9 @@ class User(TimeStampMixin, Base):
     __tablename__ = "users"
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
     timezone: Mapped[str] = mapped_column(nullable=False)
+    standard_timers: Mapped[list["StandardTimer"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class StandardTimer(TimerMixin, TimeStampMixin, Base):

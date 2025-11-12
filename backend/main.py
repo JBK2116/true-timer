@@ -19,7 +19,7 @@ logging.config.dictConfig(LOGGING_CONFIG)
 
 origins: list[str] = [
     "http://localhost:8080",  # frontend dev server
-    "http://localhost:63342", # frontend dev server
+    "http://localhost:63342",  # frontend dev server
     "http://127.0.0.1:8080",  # frontend via IP
     # "https://domain.com",
     # "https://www.domain.com",

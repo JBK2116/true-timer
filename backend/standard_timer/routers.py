@@ -14,7 +14,14 @@ from backend.db import get_db
 from backend.models import StandardTimer, User
 from backend.queries import get_user_by_uuid
 from backend.standard_timer import services
-from backend.standard_timer.schemas import CreateStandardTimerIn, CreateStandardTimerOut
+from backend.standard_timer.schemas import (
+    CreateStandardTimerIn,
+    CreateStandardTimerOut,
+    EndStandardTimerOut,
+    PauseStandardTimerOut,
+    ResumeStandardTimerOut,
+    StartStandardTimerOut,
+)
 
 router = APIRouter(prefix="/standard", tags=["standard-timer"])
 
@@ -47,3 +54,43 @@ async def create_standard_timer(
     except ValueError as e:
         # value error thrown from @validates function in `db.py`
         return JSONResponse(status_code=400, content={"message": f"{e.args[0]}"})
+
+
+@router.post("/start/{timer_id}", response_model=StartStandardTimerOut)
+async def start_timer(
+    timer_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(services.get_user_header_id),
+):
+    # TODO: Implement this
+    pass
+
+
+@router.post("/pause/{timer_id}", response_model=PauseStandardTimerOut)
+async def pause_timer(
+    timer_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(services.get_user_header_id),
+):
+    # TODO: Implement this
+    pass
+
+
+@router.post("/resume/{timer_id}", response_model=ResumeStandardTimerOut)
+async def resume_timer(
+    timer_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(services.get_user_header_id),
+):
+    # TODO: Implement this
+    pass
+
+
+@router.post("/end/{timer_id}", response_model=EndStandardTimerOut)
+async def end_timer(
+    timer_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(services.get_user_header_id),
+):
+    # TODO: Implement this
+    pass
